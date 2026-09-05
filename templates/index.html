@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Secure File Integrity Monitor
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <h1>
+        Secure File Integrity Monitor
+    </h1>
+
+
+    <p class="subtitle">
+        SHA-256 based file integrity verification
+    </p>
+
+
+    <!-- Upload Section -->
+
+    <div class="card">
+
+        <h2>
+            Check File Integrity
+        </h2>
+
+
+        <form id="fileForm">
+
+            <input
+                type="file"
+                id="fileInput"
+                name="file"
+                required
+            >
+
+
+            <button type="submit">
+                Check Integrity
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- Result -->
+
+    <div
+        id="result"
+        class="card hidden"
+    >
+
+        <h2>
+            Security Analysis
+        </h2>
+
+
+        <p>
+            <strong>File:</strong>
+            <span id="filename"></span>
+        </p>
+
+
+        <p>
+            <strong>Status:</strong>
+            <span id="status"></span>
+        </p>
+
+
+        <p>
+            <strong>Risk Level:</strong>
+            <span id="risk"></span>
+        </p>
+
+
+        <p>
+            <strong>Hash Difference:</strong>
+            <span id="difference"></span>%
+        </p>
+
+
+        <p>
+            <strong>Different Bits:</strong>
+            <span id="differentBits"></span>
+            / 256
+        </p>
+
+
+        <p>
+            <strong>SHA-256 Execution Time:</strong>
+            <span id="executionTime"></span>
+            seconds
+        </p>
+
+
+        <div class="hash-box">
+
+            <p>
+                <strong>Original Hash:</strong>
+            </p>
+
+            <p id="originalHash"></p>
+
+        </div>
+
+
+        <div class="hash-box">
+
+            <p>
+                <strong>Current Hash:</strong>
+            </p>
+
+            <p id="currentHash"></p>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- History -->
+
+    <div class="card">
+
+        <h2>
+            Verification History
+        </h2>
+
+
+        <button id="historyButton">
+            Load History
+        </button>
+
+
+        <div id="history"></div>
+
+    </div>
+
+
+</div>
+
+
+<script
+    src="{{ url_for('static', filename='script.js') }}">
+</script>
+
+
+</body>
+
+</html>
