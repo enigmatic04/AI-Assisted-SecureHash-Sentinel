@@ -2,167 +2,276 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>
-        Secure File Integrity Monitor
-    </title>
+    <title>SecureHash Sentinel</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
-
 </head>
-
 
 <body>
 
+<div class="dashboard">
 
-<div class="container">
+    <!-- HEADER -->
+
+    <header class="header">
+
+        <div>
+            <h1>SecureHash Sentinel</h1>
+
+            <p>
+                AI-Assisted File Integrity Monitoring System
+            </p>
+        </div>
+
+        <div class="security-status">
+            <span class="status-dot"></span>
+            SYSTEM ACTIVE
+        </div>
+
+    </header>
 
 
-    <h1>
-        Secure File Integrity Monitor
-    </h1>
+    <!-- STATS -->
+
+    <section class="stats">
+
+        <div class="stat-card">
+            <span class="stat-label">MONITORING</span>
+            <strong>SHA-256</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">ALGORITHM</span>
+            <strong>256-BIT</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">DATABASE</span>
+            <strong>SQLITE</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">AI ANALYSIS</span>
+            <strong>ENABLED</strong>
+        </div>
+
+    </section>
 
 
-    <p class="subtitle">
-        SHA-256 based file integrity verification
-    </p>
+    <!-- FILE CHECK -->
 
+    <section class="card">
 
-    <!-- Upload Section -->
+        <div class="section-title">
 
-    <div class="card">
+            <div>
+                <h2>File Integrity Verification</h2>
 
-        <h2>
-            Check File Integrity
-        </h2>
+                <p>
+                    Upload a file to calculate and compare its SHA-256 hash.
+                </p>
+            </div>
+
+        </div>
 
 
         <form id="fileForm">
 
-            <input
-                type="file"
-                id="fileInput"
-                name="file"
-                required
-            >
+            <div class="upload-area">
+
+                <div class="upload-icon">
+                    🔐
+                </div>
+
+                <h3>Select a file</h3>
+
+                <p>
+                    The file will be analyzed using SHA-256 hashing.
+                </p>
+
+                <input
+                    type="file"
+                    id="fileInput"
+                    name="file"
+                    required
+                >
+
+            </div>
 
 
-            <button type="submit">
+            <button type="submit" class="primary-button">
                 Check Integrity
             </button>
 
         </form>
 
-    </div>
+    </section>
 
 
-    <!-- Result -->
+    <!-- RESULT -->
 
-    <div
-        id="result"
-        class="card hidden"
-    >
+    <section id="result" class="card hidden">
 
-        <h2>
-            Security Analysis
-        </h2>
-
-
-        <p>
-            <strong>File:</strong>
-            <span id="filename"></span>
-        </p>
+        <div class="section-title">
+            <div>
+                <h2>Security Analysis</h2>
+                <p>Integrity verification results</p>
+            </div>
+        </div>
 
 
-        <p>
-            <strong>Status:</strong>
-            <span id="status"></span>
-        </p>
+        <div class="result-grid">
 
+            <div class="result-item">
+                <span>FILE</span>
+                <strong id="filename"></strong>
+            </div>
 
-        <p>
-            <strong>Risk Level:</strong>
-            <span id="risk"></span>
-        </p>
+            <div class="result-item">
+                <span>STATUS</span>
+                <strong id="status"></strong>
+            </div>
 
+            <div class="result-item">
+                <span>RISK LEVEL</span>
+                <strong id="risk"></strong>
+            </div>
 
-        <p>
-            <strong>Hash Difference:</strong>
-            <span id="difference"></span>%
-        </p>
+            <div class="result-item">
+                <span>HASH DIFFERENCE</span>
+                <strong>
+                    <span id="difference"></span>%
+                </strong>
+            </div>
 
+            <div class="result-item">
+                <span>DIFFERENT BITS</span>
+                <strong>
+                    <span id="differentBits"></span> / 256
+                </strong>
+            </div>
 
-        <p>
-            <strong>Different Bits:</strong>
-            <span id="differentBits"></span>
-            / 256
-        </p>
-
-
-        <p>
-            <strong>SHA-256 Execution Time:</strong>
-            <span id="executionTime"></span>
-            seconds
-        </p>
-
-
-        <div class="hash-box">
-
-            <p>
-                <strong>Original Hash:</strong>
-            </p>
-
-            <p id="originalHash"></p>
+            <div class="result-item">
+                <span>EXECUTION TIME</span>
+                <strong>
+                    <span id="executionTime"></span> sec
+                </strong>
+            </div>
 
         </div>
 
 
-        <div class="hash-box">
+        <div class="hash-container">
 
-            <p>
-                <strong>Current Hash:</strong>
-            </p>
+            <div class="hash-box">
 
-            <p id="currentHash"></p>
+                <span>ORIGINAL SHA-256</span>
+
+                <p id="originalHash"></p>
+
+            </div>
+
+
+            <div class="hash-box">
+
+                <span>CURRENT SHA-256</span>
+
+                <p id="currentHash"></p>
+
+            </div>
 
         </div>
 
 
-    </div>
+        <div id="aiBox" class="ai-box">
+
+            <div class="ai-header">
+                🤖 AI Security Analysis
+            </div>
+
+            <p id="aiAnalysis">
+                Analyzing...
+            </p>
+
+        </div>
+
+    </section>
 
 
-    <!-- History -->
+    <!-- HISTORY -->
 
-    <div class="card">
+    <section class="card">
 
-        <h2>
-            Verification History
-        </h2>
+        <div class="history-header">
+
+            <div>
+                <h2>Verification History</h2>
+
+                <p>
+                    Previous file integrity checks
+                </p>
+            </div>
+
+            <div class="history-buttons">
+
+                <button
+                    id="historyButton"
+                    class="secondary-button">
+                    Load History
+                </button>
+
+                <button
+                    id="clearHistoryButton"
+                    class="danger-button">
+                    Clear History
+                </button>
+
+            </div>
+
+        </div>
 
 
-        <button id="historyButton">
-            Load History
-        </button>
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>File</th>
+                        <th>Status</th>
+                        <th>Risk</th>
+                        <th>Difference</th>
+                        <th>Execution</th>
+                        <th>Checked</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="historyTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
 
 
-        <div id="history"></div>
-
-    </div>
-
+    <footer>
+        SecureHash Sentinel • SHA-256 File Integrity Monitoring
+    </footer>
 
 </div>
 
 
-<script
-    src="{{ url_for('static', filename='script.js') }}">
-</script>
-
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 
 </body>
 

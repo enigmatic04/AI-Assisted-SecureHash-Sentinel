@@ -1,246 +1,224 @@
 const form = document.getElementById("fileForm");
 
-
 form.addEventListener("submit", async function(event) {
 
     event.preventDefault();
 
-
-    const fileInput =
-        document.getElementById("fileInput");
-
-
-    const result =
-        document.getElementById("result");
-
+    const fileInput = document.getElementById("fileInput");
+    const result = document.getElementById("result");
 
     const file = fileInput.files[0];
 
-
     if (!file) {
-
         alert("Please select a file.");
-
         return;
     }
 
-
     const formData = new FormData();
-
 
     formData.append("file", file);
 
-
     result.classList.remove("hidden");
 
-
-    result.innerHTML =
-        "<h2>Checking file...</h2>";
-
+    document.getElementById("filename").innerHTML = "Checking...";
+    document.getElementById("status").innerHTML = "Analyzing...";
+    document.getElementById("risk").innerHTML = "...";
 
     try {
 
         const response = await fetch("/check", {
-
             method: "POST",
-
             body: formData
-
         });
-
 
         const data = await response.json();
 
-
         if (data.error) {
+            alert(data.error);
+            return;
+        }
 
-            result.innerHTML =
-                `<p>${data.error}</p>`;
+        document.getElementById("filename").innerHTML =
+            data.filename;
+
+        document.getElementById("status").innerHTML =
+            `<span class="badge ${
+                data.status === "FILE MODIFIED"
+                ? "modified"
+                : "verified"
+            }">${data.status}</span>`;
+
+        document.getElementById("risk").innerHTML =
+            `<span class="badge ${data.risk.toLowerCase()}">
+                ${data.risk}
+            </span>`;
+
+        document.getElementById("difference").innerHTML =
+            data.difference;
+
+        document.getElementById("differentBits").innerHTML =
+            data.different_bits;
+
+        document.getElementById("executionTime").innerHTML =
+            data.execution_time;
+
+        document.getElementById("originalHash").innerHTML =
+            data.original_hash;
+
+        document.getElementById("currentHash").innerHTML =
+            data.current_hash;
+
+        document.getElementById("aiAnalysis").innerHTML =
+            data.ai_analysis ||
+            "AI analysis not available for this check.";
+
+        loadHistory();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Something went wrong while checking the file.");
+    }
+});
+
+
+/* LOAD HISTORY */
+
+async function loadHistory() {
+
+    const historyTable =
+        document.getElementById("historyTable");
+
+    try {
+
+        const response = await fetch("/history");
+
+        const data = await response.json();
+
+        historyTable.innerHTML = "";
+
+        if (data.length === 0) {
+
+            historyTable.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align:center;">
+                        No verification history found.
+                    </td>
+                </tr>
+            `;
 
             return;
         }
 
+        data.forEach(function(record) {
 
-        // Restore result HTML
+            const row = document.createElement("tr");
 
-        result.innerHTML = `
+            const statusClass =
+                record.status === "FILE MODIFIED"
+                ? "modified"
+                : "verified";
 
-            <h2>Security Analysis</h2>
+            const riskClass =
+                record.risk.toLowerCase();
 
-            <p>
-                <strong>File:</strong>
-                <span id="filename"></span>
-            </p>
+            row.innerHTML = `
 
-            <p>
-                <strong>Status:</strong>
-                <span id="status"></span>
-            </p>
+                <td>${record.filename}</td>
 
-            <p>
-                <strong>Risk Level:</strong>
-                <span id="risk"></span>
-            </p>
+                <td>
+                    <span class="badge ${statusClass}">
+                        ${record.status}
+                    </span>
+                </td>
 
-            <p>
-                <strong>Hash Difference:</strong>
-                <span id="difference"></span>%
-            </p>
+                <td>
+                    <span class="badge ${riskClass}">
+                        ${record.risk}
+                    </span>
+                </td>
 
-            <p>
-                <strong>Different Bits:</strong>
-                <span id="differentBits"></span>
-                / 256
-            </p>
+                <td>
+                    ${record.difference}%
+                </td>
 
-            <p>
-                <strong>SHA-256 Execution Time:</strong>
-                <span id="executionTime"></span>
-                seconds
-            </p>
+                <td>
+                    ${record.execution_time}s
+                </td>
 
-            <div class="ai-box">
+                <td>
+                    ${record.checked_at}
+                </td>
 
-                <h3>AI Security Analysis</h3>
+                <td>
+                    <button
+                        class="delete-button"
+                        onclick="deleteRecord(${record.id})">
+                        🗑️
+                    </button>
+                </td>
 
-                <p id="aiAnalysis">
-                Analyzing...
-                </p>
+            `;
 
-            </div>
-            
+            historyTable.appendChild(row);
 
-            <div class="hash-box">
-
-                <strong>Original Hash:</strong>
-
-                <p id="originalHash"></p>
-
-            </div>
-
-            <div class="hash-box">
-
-                <strong>Current Hash:</strong>
-
-                <p id="currentHash"></p>
-
-            </div>
-
-        `;
-
-
-        // DOM manipulation
-
-        document.getElementById("filename")
-            .innerHTML = data.filename;
-
-
-        document.getElementById("status")
-            .innerHTML = data.status;
-
-
-        document.getElementById("risk")
-            .innerHTML = data.risk;
-
-
-        document.getElementById("difference")
-            .innerHTML = data.difference;
-
-
-        document.getElementById("differentBits")
-            .innerHTML = data.different_bits;
-
-
-        document.getElementById("executionTime")
-            .innerHTML = data.execution_time;
-
-        document.getElementById("aiAnalysis")
-            .innerHTML = data.ai_analysis;
-
-
-        document.getElementById("originalHash")
-            .innerHTML = data.original_hash;
-
-
-        document.getElementById("currentHash")
-            .innerHTML = data.current_hash;
-
+        });
 
     } catch (error) {
-
-        result.innerHTML =
-            "<p>Something went wrong.</p>";
 
         console.error(error);
 
     }
-
-});
-
-
-// History button
-
-const historyButton =
-    document.getElementById("historyButton");
+}
 
 
-historyButton.addEventListener("click", async function() {
+/* LOAD HISTORY BUTTON */
+
+document
+    .getElementById("historyButton")
+    .addEventListener("click", loadHistory);
 
 
-    const historyDiv =
-        document.getElementById("history");
+/* DELETE ONE RECORD */
 
+async function deleteRecord(id) {
 
-    const response =
-        await fetch("/history");
+    const confirmDelete =
+        confirm("Delete this verification record?");
 
+    if (!confirmDelete) {
+        return;
+    }
 
-    const data =
-        await response.json();
-
-
-    historyDiv.innerHTML = "";
-
-
-    data.forEach(function(record) {
-
-
-        const item =
-            document.createElement("div");
-
-
-        item.classList.add("history-item");
-
-
-        item.innerHTML = `
-
-            <strong>${record.filename}</strong>
-
-            <br>
-
-            Status:
-            ${record.status}
-
-            <br>
-
-            Risk:
-            ${record.risk}
-
-            <br>
-
-            Hash Difference:
-            ${record.difference}%
-
-            <br>
-
-            Checked:
-            ${record.checked_at}
-
-        `;
-
-
-        historyDiv.appendChild(item);
-
+    await fetch(`/history/delete/${id}`, {
+        method: "DELETE"
     });
 
-});
+    loadHistory();
+}
+
+
+/* CLEAR ALL HISTORY */
+
+document
+    .getElementById("clearHistoryButton")
+    .addEventListener("click", async function() {
+
+        const confirmClear =
+            confirm(
+                "Clear all verification history?\n\n" +
+                "Original file hashes will NOT be deleted."
+            );
+
+        if (!confirmClear) {
+            return;
+        }
+
+        await fetch("/history/clear", {
+            method: "DELETE"
+        });
+
+        loadHistory();
+
+    });

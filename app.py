@@ -12,7 +12,9 @@ from database import (
     find_file,
     register_file,
     save_history,
-    get_history
+    get_history,
+    delete_history,
+    clear_history
 )
 
 from ai_analysis import analyze_security
@@ -140,19 +142,39 @@ def check_file():
 @app.route("/history")
 def history():
     records = get_history()
+
     history_data = []
 
     for record in records:
         history_data.append({
-            "filename": record[0],
-            "hash": record[1],
-            "status": record[2],
-            "risk": record[3],
-            "difference": record[4],
-            "execution_time": record[5],
-            "checked_at": record[6]
+            "id": record[0],
+            "filename": record[1],
+            "hash": record[2],
+            "status": record[3],
+            "risk": record[4],
+            "difference": record[5],
+            "execution_time": record[6],
+            "checked_at": record[7]
         })
+
     return jsonify(history_data)
+
+@app.route("/history/delete/<int:history_id>", methods=["DELETE"])
+def delete_history_record(history_id):
+    delete_history(history_id)
+
+    return jsonify({
+        "message": "History record deleted successfully."
+    })
+
+
+@app.route("/history/clear", methods=["DELETE"])
+def clear_all_history():
+    clear_history()
+
+    return jsonify({
+        "message": "Verification history cleared successfully."
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)
