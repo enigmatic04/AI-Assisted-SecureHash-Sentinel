@@ -16,17 +16,21 @@ def calculate_sha256(file_path):
 
 
 def calculate_hash_difference(hash1, hash2):
-    """
-    Calculate percentage of different bits
-    between two SHA-256 hashes.
-    """
+
+    # Convert hexadecimal hashes into binary
     binary1 = bin(int(hash1, 16))[2:].zfill(256)
     binary2 = bin(int(hash2, 16))[2:].zfill(256)
-    different_bits = sum(
-        bit1 != bit2
-        for bit1, bit2 in zip(binary1, binary2)
-    )
+
+    # Count different bits
+    different_bits = 0
+
+    for i in range(256):
+        if binary1[i] != binary2[i]:
+            different_bits += 1
+
+    # Calculate percentage
     percentage = (different_bits / 256) * 100
+
     return different_bits, round(percentage, 2)
 
 def get_risk_level(difference):

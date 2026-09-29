@@ -6,11 +6,9 @@ DATABASE = "integrity.db"
 def get_connection():
     return sqlite3.connect(DATABASE)
 
-
 def create_database():
     connection = get_connection()
     cursor = connection.cursor()
-
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS files (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
